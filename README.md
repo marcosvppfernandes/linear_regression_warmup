@@ -3,7 +3,7 @@
 
 For the following exercise, we will use the well know Auto MPG dataset, which you can read about [here](https://archive.ics.uci.edu/ml/datasets/Auto+MPG).
 
-The task for this exercise will be to build a series of models, using both sklearn and statsmodels, to predict miles per gallon for each car record.  To do so, we have a set of predictive features.  The list, `column_names`, contains the names of both both the dependent and independent variables.  
+The task for this exercise will be to build a series of models, using both sklearn and statsmodels, to predict miles per gallon for each car record.  To do so, we have a set of predictive features.  The list, `column_names`, contains the names of both the dependent and independent variables.  
 
 
 
@@ -25,12 +25,10 @@ import seaborn as sns
 
 
 ```python
-
-
 df = pd.read_csv('data/auto-mpg.data', delim_whitespace=' ')
 ```
 
-Now, using the `columns` attribute, add column names to the dataframe.  
+Now, using the `columns` attribute of `df`, add column names to the dataframe.  
 
 
 ```python
@@ -159,6 +157,8 @@ df.head()
 
 # Data Prep
 
+As always, we need to check for missing values.
+
 
 ```python
 # Code to inspect if there are missing values.
@@ -186,6 +186,8 @@ df.isna().sum()
 
 
 
+Let's also inspec the column datatypes.
+
 
 ```python
 # code to inspect the datatypes of the columns
@@ -199,26 +201,26 @@ df.info()
 ```
 
     <class 'pandas.core.frame.DataFrame'>
-    Int64Index: 391 entries, 0 to 396
+    RangeIndex: 397 entries, 0 to 396
     Data columns (total 9 columns):
      #   Column        Non-Null Count  Dtype  
     ---  ------        --------------  -----  
-     0   mpg           391 non-null    float64
-     1   cylinders     391 non-null    int64  
-     2   displacement  391 non-null    float64
-     3   horsepower    391 non-null    float64
-     4   weight        391 non-null    float64
-     5   acceleration  391 non-null    float64
-     6   modelyear     391 non-null    int64  
-     7   origin        391 non-null    int64  
-     8   carname       391 non-null    object 
-    dtypes: float64(5), int64(3), object(1)
-    memory usage: 30.5+ KB
+     0   mpg           397 non-null    float64
+     1   cylinders     397 non-null    int64  
+     2   displacement  397 non-null    float64
+     3   horsepower    397 non-null    object 
+     4   weight        397 non-null    float64
+     5   acceleration  397 non-null    float64
+     6   modelyear     397 non-null    int64  
+     7   origin        397 non-null    int64  
+     8   carname       397 non-null    object 
+    dtypes: float64(4), int64(3), object(2)
+    memory usage: 28.0+ KB
 
 
-Oddly enough, the `horsepower` column is encoded as a string.   Let's convert the `horsepower` column to a float. 
+Oddly enough, the `horsepower` column is encoded as a string.   Let's convert the `horsepower` column to `float`. 
 
-* Hint: your first attempt to convert the column may through an error. The last line of the error message should indicate the value messing things up.  Replace that value with np.nan and try again*
+* Hint: your first attempt to convert the column may through an error. The last line of the error message should indicate the value that gumming up the works messing.  Use df.replace(), and replace value with np.nan, then try to change the dtype once more*
 
 
 
@@ -264,7 +266,7 @@ print("Dropping those NA's should result in 391 records. Good job.")
     Dropping those NA's should result in 391 records. Good job.
 
 
-The goal of this exercise is to become familiar with using our regression tools. We will pause for the briefest of EDA, and run a pairplot in the cell below:
+The goal of this exercise is to become familiar with using our regression tools. Before doing so, we will pause for the briefest of EDA, and run a pairplot in the cell below (word of caution: EDA is always important. A pairplot is a first step. It does not represent a complete EDA process).
 
 
 ```python
@@ -274,21 +276,21 @@ sns.pairplot(df)
 
 
 
-    <seaborn.axisgrid.PairGrid at 0x12974a080>
+    <seaborn.axisgrid.PairGrid at 0x11b16c160>
 
 
 
 
-![png](index_files/index_25_1.png)
+![png](index_files/index_27_1.png)
 
 
-There is much you gan gather from the pairplot above, but for now, just notice that the plots for cylinders, model year, and origin have a different pattern than the rest. Looking at the first row of the pairplot, we see that the x-values correspond to discrete values on the X-axis, and resulting in horizontal lines.  These descrete outcomes are possible candidates for One Hot Encoding or turning into binary variables.
+There is much you gan gather from the pairplot above, but for now, just notice that the plots for cylinders, model year, and origin have a different type of pattern than the rest. Looking at the first row of the pairplot, we see that the x-values of those three columns correspond to discrete values on the X-axis, resulting in horizontal lines.  These descrete outcomes are possible candidates for one hot encoding or binarizing.
 
 Two other important takeaways from the plot are: collinearity between features (evident in points grouped along the diagonal); and curvature (which might suggest a polynomial transformation could be beneficial).  We will leave that aside for now, and practice model fitting.
 
 # Model building with sklearn
 
-Use the mask below to isolate the 4 continuous features and the target.  
+Use the mask below to isolate the 4 continuous features and the target from our `df`.  
 
 
 ```python
@@ -327,7 +329,6 @@ Split the target off from the dataset, and assign it the variable `y` below.
 
 ```python
 # Replace None with your code
-
 y = None
 ```
 
@@ -357,7 +358,7 @@ X = None
 
 ```python
 #__SOLUTION__ 
-X = df_continous.drop('mpg', axis = 1)
+X = df_continuous.drop('mpg', axis = 1)
 ```
 
 
@@ -372,7 +373,7 @@ The data is now ready to be fed into sklearn's LinearRegression class, which is 
 from sklearn.linear_model import LinearRegression
 ```
 
-To build the model, instantiate an instance of the LinearRegression class. Assign `LinearRegression()` to the variable `lr` below.
+To build the model, create an instance of the LinearRegression class: assign `LinearRegression()` to the variable `lr` below.
 
 
 ```python
@@ -409,9 +410,13 @@ lr.fit(X,y)
 
 ```python
 assert np.isclose(lr.coef_[1], -0.04381764059543403 )
+print('Noice')
 ```
 
-Now that the model has been fit, the `lr` variable has been filled with information learned from the data.
+    Noice
+
+
+Now that the model has been fit, the `lr` variable has been filled with information learned from the data. Look at the `.coef_` attribute, which describes the calculated betas associated with each independent variable.
 
 
 
@@ -428,7 +433,7 @@ for column_name, coefficient in zip(lr.coef_, X.columns):
 
 The coefficient associated with horsepower is roughly -.0438.
 
-Interepret the meaning of that coefficient. How does a 1-Unit increase in horsepower affect mpg?
+#### Interepret the meaning of that coefficient. How does a 1-Unit increase in horsepower affect mpg?
 
 > Your written answer here.
 
@@ -481,7 +486,7 @@ Let's now compare Statsmodel's output.
 from statsmodels.formula.api import ols
 ```
 
-Statsmodels takes a formula string as an argument, which looks like what you might expect from the R language.
+Statsmodels takes a **formula string** as an argument, which looks like what you might expect from the R language.
 
 $target \sim column\_name\_1 \ + column\_name\_2 + \ ...\ + column\_name\_n$
 
@@ -489,7 +494,7 @@ To do so, we can join the list of columns of X with a `+`
 
 
 ```python
-# join the columns by feeding X into "+".join().
+# join the columns by feeding X.columns into "+".join().
 columns = None
 ```
 
@@ -516,12 +521,35 @@ formula = target + '~'+columns
 assert formula == 'mpg~displacement+horsepower+weight+acceleration'
 ```
 
-Lastly, pass the formula and the original `df` into `ols()` as parameters.  Then, chain the methods .fit() and .summary().  You need to feed in the original df, because `ols` requires the target to be present in the data parameter that you pass.
+Lastly, pass `formula` and the original `df` into `ols()` as parameters.  
+
+Then, chain the methods .fit() and .summary().  
+
+Note: You need to feed in the original `df`, because `ols` requires the target to be present in the data parameter that you pass.
 
 
 ```python
 # Feed formula and df to the line of code below. 
-ols(formula, df).fit().summary()
+ols().fit().summary()
+```
+
+
+    ---------------------------------------------------------------------------
+
+    TypeError                                 Traceback (most recent call last)
+
+    <ipython-input-106-0d67883d2125> in <module>
+          1 # Feed formula and df to the line of code below.
+    ----> 2 ols().fit().summary()
+    
+
+    TypeError: from_formula() missing 2 required positional arguments: 'formula' and 'data'
+
+
+
+```python
+#__SOLUTION__
+ols(formula,df).fit().summary()
 ```
 
 
@@ -542,7 +570,7 @@ ols(formula, df).fit().summary()
   <th>Date:</th>             <td>Tue, 09 Feb 2021</td> <th>  Prob (F-statistic):</th> <td>2.20e-101</td>
 </tr>
 <tr>
-  <th>Time:</th>                 <td>15:18:14</td>     <th>  Log-Likelihood:    </th> <td> -1118.2</td> 
+  <th>Time:</th>                 <td>15:40:48</td>     <th>  Log-Likelihood:    </th> <td> -1118.2</td> 
 </tr>
 <tr>
   <th>No. Observations:</th>      <td>   391</td>      <th>  AIC:               </th> <td>   2246.</td> 
@@ -594,13 +622,8 @@ ols(formula, df).fit().summary()
 
 
 
-The `summary` gives a lot of good information, but for now, just confirm that the r_squared is the same (rounded) as the sklearn method performed at the top of the notebook.
+The `summary` gives a lot of good information, but for now, just confirm that the R_squared is the same (rounded) as the sklearn r_squared found nearer the top of the notebook.
 
 Also, look at the coef column and confirm that the beta coefficients are consistent across both sklearn and statsmodels.
 
 If they are the same, pat yourself on the back.
-
-
-```python
-
-```
